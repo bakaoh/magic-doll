@@ -1,0 +1,54 @@
+<style>
+  .poolavartar {
+    opacity: 0.4;
+    filter: alpha(opacity=40);
+  }
+
+  .poolcard:hover .poolavartar {
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+  }
+
+  .poolcard:hover {
+    border-color: #a7adae;
+  }
+</style>
+<% ["Official", "Community"].forEach(function (poolType) {
+  let _pools = poolType == "Official" ? pools : cpools; %>
+<p class="title is-4"><%= poolType %> Pools</p>
+<% for (let i = 0; i < Math.ceil(_pools.length/3); i++){ %>
+<div class="columns">
+  <% for (let j = 0; j < 3 && (i*3+j) < _pools.length; j++){ let pool = _pools[i*3+j]; %>
+  <div class="column is-one-third">
+    <a href="/sumer/@<%= pool.poolName %>">
+      <div class="card poolcard">
+        <% if (poolType == "Official") { %>
+        <div class="card-image">
+          <figure class="image is-4by3">
+            <img class="poolavartar" src="/avatar/<%= pool.poolName %>.jpg" alt="Pool avatar">
+          </figure>
+        </div>
+        <% } %>
+        <div class="card-content">
+          <div class="media">
+            <div class="media-content">
+              <p class="title is-4"><%= pool.poolName %></p>
+              <p class="subtitle is-6">@<%= pool.creator %></p>
+            </div>
+          </div>
+
+          <div class="content">
+            <b>Share policy:</b> <%= pool.policy %> <br>
+            <b>Strategy:</b> kyle <abbr title="22c45201c7b40d8719bd8da3fae74cf9839bf3ea0770ce5fda846eaf">22c452</abbr>
+            <br>
+            <b>Your value:</b> <%= pool.userValueInPool %> DEC <br>
+            <b>Your card:</b> <%= pool.userCardInPool %> <br>
+          </div>
+        </div>
+      </div>
+    </a>
+  </div>
+  <% } %>
+</div>
+<% } %>
+<% }); %>

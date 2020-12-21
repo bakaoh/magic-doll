@@ -1,0 +1,169 @@
+<table class="table is-bordered is-fullwidth">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Name</th>
+      <th>Level</th>
+      <th>Value</th>
+      <% if (loggedIn) { %><th>Action</th><% } %>
+    </tr>
+  </thead>
+  <tbody>
+    <% cards.forEach(function(card){ %>
+    <tr>
+      <td><img src="/img/<%=card.id%>.png" width="28" height="28"></td>
+      <td>
+        <button onclick="return openCardModal(1,`<%=JSON.stringify(card)%>`);"
+          class="button is-small is-fullwidth"><%=card.name%></button>
+      </td>
+      <td>
+        <button onclick="return openCardModal(2,`<%=JSON.stringify(card)%>`);"
+          class="button is-rounded is-small is-fullwidth"><%=card.level%>/<%=card.maxlevel%></button>
+      </td>
+      <td>
+        <button onclick="return openCardModal(3,`<%=JSON.stringify(card)%>`);"
+          class="button is-rounded is-small is-fullwidth"><%=card.value%></button>
+      </td>
+      <% if (loggedIn) { %>
+      <td>
+        <button onclick="return confirmDelegate(`<%=JSON.stringify(card)%>`);" class="button is-success is-small"
+          <% if (!card.delegatable) { %>disabled<% } %>>Delegate</button>
+        <button onclick="return confirmUndelegate(`<%=JSON.stringify(card)%>`);" class="button is-danger is-small"
+          <% if (!card.delegated) { %>disabled<% } %>>Undelegate</button>
+        <a href="https://steemmonsters.com/?p=card_details&id=<%=card.id%>&gold=false&edition=<%=card.edition%>&tab=cards"
+          target="_blank" class="button is-info is-small">My cards</button>
+      </td>
+      <% } %>
+    </tr>
+    <% }); %>
+  </tbody>
+</table>
+<script>
+  const pool = JSON.parse(`<%- JSON.stringify(pool) %>`);
+
+  const rarities = ["Common", "Rare", "Epic", "Legendary"];
+  const maxLevels = [10, 8, 6, 4];
+  const editions = ["Alpha", "Beta", "Promotion", "Reward", "Untamed", "Dice"];
+
+  function openCardModal(tab, card) {
+    document.getElementById("cardmodal-tab-1").classList.remove('is-active');
+    document.getElementById("cardmodal-tab-2").classList.remove('is-active');
+    document.getElementById("cardmodal-tab-3").classList.remove('is-active');
+    document.getElementById(`cardmodal-tab-${tab}`).classList.add('is-active');
+    document.getElementById("cardmodal-content-1").style.display = "none";
+    document.getElementById("cardmodal-content-2").style.display = "none";
+    document.getElementById("cardmodal-content-3").style.display = "none";
+    document.getElementById(`cardmodal-content-${tab}`).style.display = "block";
+    if (typeof tab == "undefined") return;
+
+    let detail = JSON.parse(card);
+    document.getElementById("cardmodal-img").src = detail.img;
+    document.getElementById("cardmodal-content-1").innerHTML = `
+          <table class="table is-bordered is-fullwidth">
+            <tbody>
+              <tr><th>ID</th><td>${detail.id}</td></tr>
+              <tr><th>Name</th><td>${detail.name}</td></tr>
+              <tr><th>Rarity</th><td>${rarities[detail.rarity - 1]}</td></tr>
+              <tr><th>Edition</th><td>${editions[detail.edition]}</td></tr>
+              <tr><th>Card</th><td>${detail.uid}</td></tr>
+              <tr><th>Owner</th><td>${detail.owner}</td></tr>
+            </tbody>
+          </table>`;
+
+    let html = `
+          <table class="table is-bordered is-fullwidth">
+            <thead>
+              <tr>
+                <th>Rarity</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>`;
+    for (let i in rarities) {
+      html += `
+            <tr ${i == detail.rarity - 1 ? 'class="is-selected"' : ''}>
+              <th>${rarities[i]}</th>
+              <td>${maxLevels[i]}</td>
+            </tr>`;
+    }
+    document.getElementById("cardmodal-content-2").innerHTML = html + `</tbody></table>`;
+    html = `
+          <table class="table is-bordered is-fullwidth">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Value</th>
+                <th>% in pool</th>
+              </tr>
+            </thead>
+            <tbody>`;
+    for (let i in detail.values) {
+      const level = parseInt(i) + 1;
+      const value = detail.values[i];
+      let percent = 0;
+      if (pool.poolValue > 0) percent = value * 100 / pool.poolValue;
+      html += `
+            <tr ${level == detail.level ? 'class="is-selected"' : ''}>
+              <th>${level}</th>
+              <td>${value}</td>
+              <td>${percent.toFixed(2)} %</td>
+            </tr>`;
+    }
+    document.getElementById("cardmodal-content-3").innerHTML = html + `</tbody></table>`;
+
+    var $target = document.getElementById("cardmodal");
+    $target.classList.add('is-active');
+    document.documentElement.classList.add("is-clipped");
+  }
+
+  function sendJson(id, jsonMessage) {
+    if (typeof hive_keychain === 'undefined') {
+      showError(`This action required Hive Keychain to sign transaction. <br>Download for <a href="https://chrome.google.com/webstore/detail/hive-keychain/jcacnejopjdphbnjgfaaobbfafkihpep" target="_blank">Chrome/Opera/Brave</a><a href="https://addons.mozilla.org/en-GB/firefox/addon/hive-keychain/" target="_blank">/Firefox</a>`);
+    } else {
+      showProcessBar();
+      hive_keychain.requestCustomJson(user.userName, id, "Posting", jsonMessage,
+        "Broadcasting a Custom JSON", r => {
+          if (r.success) location.reload();
+          else showError(((typeof r.error == 'string') ? r.error : JSON.stringify(r.error)));
+        });
+    }
+  };
+
+  function delegate(uid) {
+    const message = { to: pool.poolName, cards: [uid], app: "steemmonsters/0.7.60" };
+    sendJson("sm_delegate_cards", JSON.stringify(message));
+  }
+
+  function undelegate(uid) {
+    const message = { cards: [uid], app: "steemmonsters/0.7.60" };
+    sendJson("sm_undelegate_cards", JSON.stringify(message));
+  }
+
+  function confirmDelegate(card) {
+    let detail = JSON.parse(card);
+    let html = `
+        <header class="modal-card-head">
+          <p class="modal-card-title">What card do you want to delegate?</p>
+        </header>
+        <section class="modal-card-body">
+          <div class="buttons are-small">`;
+    for (let uid of detail.delegatable)
+      html += `<button onclick="return delegate('${uid}');" class="button">${uid}</button>`
+    document.getElementById("m-card").innerHTML = html + `</div></section>`;
+    openAlert();
+  }
+
+  function confirmUndelegate(card) {
+    let detail = JSON.parse(card);
+    let html = `
+        <header class="modal-card-head">
+          <p class="modal-card-title">What card do you want to undelegate?</p>
+        </header>
+        <section class="modal-card-body">
+          <div class="buttons are-small">`;
+    for (let uid of detail.delegated)
+      html += `<button onclick="return undelegate('${uid}');" class="button">${uid}</button>`
+    document.getElementById("m-card").innerHTML = html + `</div></section>`;
+    openAlert();
+  }
+</script>

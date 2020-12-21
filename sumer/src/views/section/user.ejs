@@ -1,0 +1,144 @@
+<style>
+  @media (min-width:801px) {
+    .leftcolumn {
+      position: sticky;
+      display: inline-block;
+      max-height: 90vh;
+      overflow-y: auto;
+      top: 2.25rem;
+      bottom: 0;
+    }
+  }
+</style>
+<aside class="column is-one-third leftcolumn">
+  <h1 class="title">
+    <a href="/sumer">Sumer.finance</a>
+  </h1>
+  <% if (!loggedIn) { %>
+  <div class="notification is-warning">
+    <button class="delete"></button>
+    To make it easy to have a glance at the prototype, the login function here will not required
+    key. You can login to <b>granverion</b> account to view how the page work. All actions that make
+    change will require you submit transaction using <a
+      href="https://chrome.google.com/webstore/detail/hive-keychain/jcacnejopjdphbnjgfaaobbfafkihpep"
+      target="_blank">Hive
+      Keychain</a>.
+  </div>
+  <div class="field-body">
+    <div class="field has-addons">
+      <div class="control is-expanded">
+        <input id="loginname" class="input" type="text" placeholder="Hive username">
+      </div>
+      <div class="control">
+        <a id="loginbtn" class="button is-info" onclick="return login();">
+          Login
+        </a>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      (document.querySelectorAll('.notification .delete') || []).forEach(($delete) => {
+        var $notification = $delete.parentNode;
+
+        $delete.addEventListener('click', () => {
+          $notification.parentNode.removeChild($notification);
+        });
+      });
+    });
+
+    document.getElementById("loginname").addEventListener("keyup", (event) => {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("loginbtn").click();
+      }
+    });
+
+    function login() {
+      let loginname = document.getElementById("loginname").value;
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          let rs = JSON.parse(this.responseText);
+          if (rs.success) {
+            location.reload();
+          } else {
+            alert(rs.message);
+          }
+        }
+      };
+      xhttp.open("POST", `/sumer/login/${loginname}`, true);
+      xhttp.send();
+    }
+  </script>
+  <% } else { %>
+  <div class="card">
+    <div class="card-content">
+      <div class="media">
+        <div class="media-content">
+          <p class="title is-4">Welcome, <%= user.userName %></p>
+          <p class="subtitle is-5"><a onclick="return logout();">logout</a></p>
+        </div>
+        <div class="media-right">
+          <span class="icon is-right">
+            <i class="fas fa-info-circle fa-lg"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="content">
+        <b>Total value:</b> <%= user.totalValue %> <br>
+        <b>Delegated value:</b> <%= user.delegatedValue %> <br>
+        <b>Total card:</b> <%= user.totalCard %> <br>
+        <b>Delegated card:</b> <%= user.delegatedCard %> <br>
+      </div>
+    </div>
+  </div>
+  <script>
+    function logout() {
+      document.cookie = 'hive-username=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      location.reload();
+    }
+  </script>
+  <% } %>
+  <% if (typeof pool != "undefined") {%>
+  <div class="card" style="margin-top: 1rem;">
+    <div class="card-content">
+      <div class="media">
+        <div class="media-left">
+          <figure class="image is-48x48">
+            <img src="https://d36mxiodymuqjm.cloudfront.net/website/icons/avatars/avatar_0.png" alt="Placeholder image">
+          </figure>
+        </div>
+        <div class="media-content">
+          <p class="title is-4"><%= pool.poolName %></p>
+          <p class="subtitle is-6">@<%= pool.creator %></p>
+        </div>
+        <div class="media-right">
+          <span class="icon is-right">
+            <i class="fas fa-info-circle fa-lg"></i>
+          </span>
+        </div>
+      </div>
+
+      <div class="content">
+        <b>Share policy:</b> <%= pool.policy %> <br>
+        <b>Strategy:</b> kyle <abbr title="22c45201c7b40d8719bd8da3fae74cf9839bf3ea0770ce5fda846eaf">22c452</abbr> <br>
+        <b>Total value:</b> <%= pool.poolValue %> DEC <br>
+        <b>Total card:</b> <%= pool.poolCard %> <br>
+        <% if (loggedIn) { %>
+        <b>Your value:</b> <%= pool.userValueInPool %> DEC <br>
+        <b>Your card:</b> <%= pool.userCardInPool %> <br>
+        <% } %>
+      </div>
+    </div>
+  </div>
+  <% } else if (loggedIn) { %>
+  <button style="margin-top: 1rem;" class="button is-medium is-success is-fullwidth" onclick="return openInform();">
+    <span>Create your own pool</span>
+    <span class="icon is-medium">
+      <i class="fas fa-angle-right"></i>
+    </span>
+  </button>
+  <% } %>
+</aside>

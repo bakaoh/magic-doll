@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sumer.finance</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.2/css/bulma.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/bulmaswatch/darkly/bulmaswatch.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+</head>
+
+<body>
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <%- include('section/user'); %>
+        <div class="column container">
+          <% if (page == "pool") { %><%- include('section/pool'); %>
+          <% } else if (page == "home") { %><%- include('section/home'); %>
+          <% } %>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="cardmodal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <div class="box">
+          <article class="media">
+            <div class="media-left">
+              <figure class="image">
+                <img id="cardmodal-img" alt="Image">
+              </figure>
+            </div>
+            <div class="media-content">
+              <div class="tabs is-fullwidth is-centered is-boxed" style="margin-bottom: -1px">
+                <ul>
+                  <li id="cardmodal-tab-1" onclick="return openCardModal(1);">
+                    <a><span>Info</span></a>
+                  </li>
+                  <li id="cardmodal-tab-2" onclick="return openCardModal(2);">
+                    <a><span>Level</span></a>
+                  </li>
+                  <li id="cardmodal-tab-3" onclick="return openCardModal(3);">
+                    <a><span>Value</span></a>
+                  </li>
+                </ul>
+              </div>
+              <div id="cardmodal-content-1"></div>
+              <div id="cardmodal-content-2"></div>
+              <div id="cardmodal-content-3"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="m-alert">
+      <div class="modal-background"></div>
+      <div class="modal-card" id="m-card"></div>
+    </div>
+
+    <div class="modal" id="informmodal">
+      <div class="modal-background"></div>
+      <div class="modal-card">
+        <!-- <header class="modal-card-head">
+          <p class="modal-card-title">Create your own pool</p>
+        </header> -->
+        <section class="modal-card-body">
+          <div class="content">
+            <h3>Benefit</h3>
+            <ul>
+              <li>You have full control of policy and strategy of the pool you created.</li>
+              <li>Make the pool public for anyone to join, or private for you and your friend only.</li>
+              <li>Receive a small income everyday even if there is noone join your pool.</li>
+            </ul>
+            <h3>Setup Fee</h3>
+            <ul>
+              <li>$10 if you already have a Splinterland account with Spellbook</li>
+              <li>$20 for our pre-created account</li>
+            </ul>
+            <h4>Please contact me <a href="mailto:idlesplinter@gmail.com">here</a></h4>
+        </section>
+      </div>
+    </div>
+  </section>
+  <script>
+    const user = JSON.parse(`<%- JSON.stringify(user) %>`);
+
+    function getAll(selector) {
+      return Array.prototype.slice.call(document.querySelectorAll(selector), 0);
+    }
+
+    var $modalCloses = getAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button');
+    if ($modalCloses.length > 0) {
+      $modalCloses.forEach(function ($el) {
+        $el.addEventListener('click', function () {
+          getAll('.modal').forEach(function ($m) {
+            $m.classList.remove('is-active');
+          });
+          document.documentElement.classList.remove("is-clipped");
+        });
+      });
+    }
+
+    function openInform() {
+      var $target = document.getElementById("informmodal");
+      $target.classList.add('is-active');
+      document.documentElement.classList.add("is-clipped");
+    }
+
+    function openAlert() {
+      var $target = document.getElementById("m-alert");
+      $target.classList.add('is-active');
+      document.documentElement.classList.add("is-clipped");
+    }
+
+    function showProcessBar() {
+      document.getElementById("m-card").innerHTML = `
+        <header class="modal-card-head">
+          <p class="modal-card-title">Submit transaction</p>
+        </header>
+        <section class="modal-card-body">
+          <progress class="progress is-medium is-dark" max="100">45%</progress>
+        </section>
+      `;
+      openAlert();
+    }
+
+    function showError(message) {
+      document.getElementById("m-card").innerHTML = `
+        <header class="modal-card-head">
+          <p class="modal-card-title">Submit error</p>
+        </header>
+        <section class="modal-card-body">
+          ${message}
+        </section>
+      `;
+      openAlert();
+    }
+  </script>
+</body>
+
+</html>

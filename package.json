@@ -1,0 +1,7 @@
+{
+  "name": "magic-doll",
+  "version": "1.0.0",
+  "description": "A golem created by the twisted witch Sumer",
+  "main": "src/index.js",
+  "license": "GPL-3.0-or-later"
+}

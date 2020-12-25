@@ -26,10 +26,10 @@
       </td>
       <% if (loggedIn) { %>
       <td>
-        <button onclick="return confirmDelegate(`<%=JSON.stringify(card)%>`);" class="button is-success is-small"
-          <% if (!card.delegatable) { %>disabled<% } %>>Delegate</button>
-        <button onclick="return confirmUndelegate(`<%=JSON.stringify(card)%>`);" class="button is-danger is-small"
-          <% if (!card.delegated) { %>disabled<% } %>>Undelegate</button>
+        <button onclick="return openSelectModal('delegate', `<%=JSON.stringify(card)%>`);"
+          class="button is-success is-small" <% if (!card.delegatable) { %>disabled<% } %>>Delegate</button>
+        <button onclick="return openSelectModal('undelegate', `<%=JSON.stringify(card)%>`);"
+          class="button is-danger is-small" <% if (!card.delegated) { %>disabled<% } %>>Undelegate</button>
         <a href="https://steemmonsters.com/?p=card_details&id=<%=card.id%>&gold=false&edition=<%=card.edition%>&tab=cards"
           target="_blank" class="button is-info is-small">My cards</button>
       </td>
@@ -139,30 +139,17 @@
     sendJson("sm_undelegate_cards", JSON.stringify(message));
   }
 
-  function confirmDelegate(card) {
+  function openSelectModal(type, card) {
     let detail = JSON.parse(card);
     let html = `
         <header class="modal-card-head">
-          <p class="modal-card-title">What card do you want to delegate?</p>
+          <p class="modal-card-title">What card do you want to ${type}?</p>
         </header>
         <section class="modal-card-body">
           <div class="buttons are-small">`;
-    for (let uid of detail.delegatable)
-      html += `<button onclick="return delegate('${uid}');" class="button">${uid}</button>`
-    document.getElementById("m-card").innerHTML = html + `</div></section>`;
-    openAlert();
-  }
-
-  function confirmUndelegate(card) {
-    let detail = JSON.parse(card);
-    let html = `
-        <header class="modal-card-head">
-          <p class="modal-card-title">What card do you want to undelegate?</p>
-        </header>
-        <section class="modal-card-body">
-          <div class="buttons are-small">`;
-    for (let uid of detail.delegated)
-      html += `<button onclick="return undelegate('${uid}');" class="button">${uid}</button>`
+    let list = type == "delegate" ? detail.delegatable : detail.delegated;
+    for (let c of list)
+      html += `<button onclick="return ${type}('${c.uid}');" class="button is-fullwidth">${c.uid} | Level: ${c.level} | Value: ${c.value}</button>`
     document.getElementById("m-card").innerHTML = html + `</div></section>`;
     openAlert();
   }

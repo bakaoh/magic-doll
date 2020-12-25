@@ -4,6 +4,10 @@ Belfyna is a [telegram](https://telegram.org/) bot that help user communicate wi
 
 ![screenshot](screenshot.png "Screenshot")
 
+## Demo
+
+Please search for `@belfyna_bot` in telegram, and send `/start` from chatbox. The bot will give you more information.
+
 ## Prerequisites
 
 - [Node](https://nodejs.org/en/)

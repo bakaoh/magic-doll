@@ -38,11 +38,15 @@
           </div>
 
           <div class="content">
-            <b>Share policy:</b> <%= pool.policy %> <br>
+            <b>Share policy:</b> <abbr title="90% for card delegator, 5% for pool owner, 5% for service">90-5-5</abbr>
+            <br>
             <b>Strategy:</b> kyle <abbr title="22c45201c7b40d8719bd8da3fae74cf9839bf3ea0770ce5fda846eaf">22c452</abbr>
             <br>
+            <% if (loggedIn) { %>
             <b>Your value:</b> <%= pool.userValueInPool %> DEC <br>
             <b>Your card:</b> <%= pool.userCardInPool %> <br>
+            <b>Your reward:</b> <%= pool.userUnclaimedReward.toFixed(4) %> <br>
+            <% } %>
           </div>
         </div>
       </div>

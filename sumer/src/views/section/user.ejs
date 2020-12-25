@@ -80,17 +80,18 @@
           <p class="subtitle is-5"><a onclick="return logout();">logout</a></p>
         </div>
         <div class="media-right">
-          <span class="icon is-right">
+          <span class="icon is-right" onclick="return userHelp();">
             <i class="fas fa-info-circle fa-lg"></i>
           </span>
         </div>
       </div>
 
       <div class="content">
-        <b>Total value:</b> <%= user.totalValue %> <br>
-        <b>Delegated value:</b> <%= user.delegatedValue %> <br>
+        <b>Total value:</b> <%= user.totalValue %> DEC <br>
+        <b>Delegated value:</b> <%= user.delegatedValue %> DEC <br>
         <b>Total card:</b> <%= user.totalCard %> <br>
         <b>Delegated card:</b> <%= user.delegatedCard %> <br>
+        <b>Total unclaimed reward:</b> <%= user.totalUnclaimedReward.toFixed(4) %> <br>
       </div>
     </div>
   </div>
@@ -115,30 +116,43 @@
           <p class="subtitle is-6">@<%= pool.creator %></p>
         </div>
         <div class="media-right">
-          <span class="icon is-right">
+          <span class="icon is-right" onclick="return poolHelp();">
             <i class="fas fa-info-circle fa-lg"></i>
           </span>
         </div>
       </div>
 
       <div class="content">
-        <b>Share policy:</b> <%= pool.policy %> <br>
+        <b>Share policy:</b> <abbr title="90% for card delegator, 5% for pool owner, 5% for service">90-5-5</abbr> <br>
         <b>Strategy:</b> kyle <abbr title="22c45201c7b40d8719bd8da3fae74cf9839bf3ea0770ce5fda846eaf">22c452</abbr> <br>
-        <b>Total value:</b> <%= pool.poolValue %> DEC <br>
-        <b>Total card:</b> <%= pool.poolCard %> <br>
         <% if (loggedIn) { %>
-        <b>Your value:</b> <%= pool.userValueInPool %> DEC <br>
-        <b>Your card:</b> <%= pool.userCardInPool %> <br>
+        <b>Your value:</b> <%= pool.userValueInPool %> / <%= pool.poolValue %> DEC <br>
+        <b>Your card:</b> <%= pool.userCardInPool %> / <%= pool.poolCard %> <br>
+        <b>Your reward:</b> <%= pool.userUnclaimedReward.toFixed(4) %>
+        <button class="button is-small" style="float: right; bottom: 0.7rem"
+          onclick="return requestPayout('<%= pool.poolName %>', pool.userUnclaimedReward);">
+          <span class="icon has-text-success is-small">
+            <i class="fas fa-download"></i>
+          </span>
+          <span>Payout</span>
+        </button>
+        <% } else { %>
+        <b>Pool value:</b> <%= pool.poolValue %> DEC <br>
+        <b>Pool card:</b> <%= pool.poolCard %> <br>
         <% } %>
       </div>
     </div>
   </div>
-  <% } else if (loggedIn) { %>
-  <button style="margin-top: 1rem;" class="button is-medium is-success is-fullwidth" onclick="return openInform();">
+  <% } else { %>
+  <button style="margin-top: 1rem;" class="button is-medium is-info is-fullwidth" onclick="return howItWork();">
+    <span>How it work</span>
+  </button>
+  <% if (loggedIn) { %>
+  <button style="margin-top: 1rem;" class="button is-medium is-success is-fullwidth" onclick="return createPoolHelp();">
     <span>Create your own pool</span>
     <span class="icon is-medium">
       <i class="fas fa-angle-right"></i>
     </span>
   </button>
-  <% } %>
+  <% }} %>
 </aside>

@@ -61,29 +61,7 @@
       <div class="modal-card" id="m-card"></div>
     </div>
 
-    <div class="modal" id="informmodal">
-      <div class="modal-background"></div>
-      <div class="modal-card">
-        <!-- <header class="modal-card-head">
-          <p class="modal-card-title">Create your own pool</p>
-        </header> -->
-        <section class="modal-card-body">
-          <div class="content">
-            <h3>Benefit</h3>
-            <ul>
-              <li>You have full control of policy and strategy of the pool you created.</li>
-              <li>Make the pool public for anyone to join, or private for you and your friend only.</li>
-              <li>Receive a small income everyday even if there is noone join your pool.</li>
-            </ul>
-            <h3>Setup Fee</h3>
-            <ul>
-              <li>$10 if you already have a Splinterland account with Spellbook</li>
-              <li>$20 for our pre-created account</li>
-            </ul>
-            <h4>Please contact me <a href="mailto:idlesplinter@gmail.com">here</a></h4>
-        </section>
-      </div>
-    </div>
+    <%- include('section/help'); %>
   </section>
   <script>
     const user = JSON.parse(`<%- JSON.stringify(user) %>`);
@@ -102,12 +80,6 @@
           document.documentElement.classList.remove("is-clipped");
         });
       });
-    }
-
-    function openInform() {
-      var $target = document.getElementById("informmodal");
-      $target.classList.add('is-active');
-      document.documentElement.classList.add("is-clipped");
     }
 
     function openAlert() {
@@ -138,6 +110,47 @@
         </section>
       `;
       openAlert();
+    }
+
+    function requestPayout(poolName, value) {
+      let html = `<header class="modal-card-head">
+                  <p class="modal-card-title">Request payout</p>
+                </header>`;
+      if (Math.floor(value) >= 1) {
+        html += `<section class="modal-card-body">
+                  <ul>
+                    <li><b>${value} DEC</b> from pool <b>${poolName}</b> will be send to your in-game account <b>${user.userName}</b></li>
+                  </ul>
+                </section>
+                <footer class="modal-card-foot">
+                  <button onclick="return sendPayout('${poolName}');" class="button is-success">Confirm</button>
+                </footer>`;
+      } else {
+        html += `<section class="modal-card-body">
+                  <ul>
+                    <li>Your balance in pool <b>${poolName}</b> must be at least 1 DEC to send payout request.</li>
+                    <li>Your current balance: <b>${value} DEC</b></li>
+                  </ul>
+                </section>`;
+      }
+      document.getElementById("m-card").innerHTML = html;
+      openAlert();
+    }
+
+    function sendPayout(poolName) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          let rs = JSON.parse(this.responseText);
+          if (rs.success) {
+            location.reload();
+          } else {
+            showError(rs.message);
+          }
+        }
+      };
+      xhttp.open("POST", `/sumer/@${poolName}/payout`, true);
+      xhttp.send();
     }
   </script>
 </body>

@@ -1,0 +1,98 @@
+<div class="modal" id="helpmodal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <section class="modal-card-body">
+      <div class="content" id="helpcontent"> </div>
+    </section>
+  </div>
+</div>
+<script>
+  function openHelp(content) {
+    document.getElementById("helpcontent").innerHTML = content;
+    var $target = document.getElementById("helpmodal");
+    $target.classList.add('is-active');
+    document.documentElement.classList.add("is-clipped");
+  }
+
+  function userHelp() {
+    openHelp(`
+      <h3>Value</h3>
+      <ul>
+        <li>Value represent for the contribution of the card in pool</li>
+        <li>Value is depend on the rarity and level of card</li>
+        <li>If there is a higher level card in the pool, your card value will be 0</li>
+      </ul>
+      <h3>Card</h3>
+      <ul>
+        <li>Correspond to Splinterland cards, which hold the value</li>
+        <li>You can buy or sell cards from <a href="https://steemmonsters.com/?p=market" target="_blank">Splinterland market</a></li>
+        <li>Card rarity: Common, Rare, Epic, Legendary</li>
+        <li>Rarer and higher level card has better value</li>
+      </ul>`);
+  }
+
+  function poolHelp() {
+    openHelp(`
+      <h3>Share policy</h3>
+      <ul>
+        <li>Is how the rewards will be split between card delegator, pool owner and the service</li>
+        <li>Share policy is set by pool owner at create time</li>
+      </ul>
+      <h3>Strategy</h3>
+      <ul>
+        <li>Is the Golem application that used to pick team</li>
+        <li>Better strategy will get more reward</li>
+        <li>Strategy is set by pool owner and may be change/improve anytime</li>
+        <li>You can make you own strategy, go <a href="https://github.com/bakaoh/magic-doll/tree/master/kyle" target="_blank">here</a> for example</li>
+      </ul>  
+      <h3>Reward</h3>
+      <ul>
+        <li>You receive reward whenever the pool win a match</li>
+        <li>Pool only use the highest level card of each type and give reward to that card owner</li>
+        <li>You can send payout request when you balance is more than 1 DEC</li>
+        <li>Reward is in DEC token, you can trade them for other cryptocurrency <a href="https://hive-engine.com/?p=market&t=DEC" target="_blank">here</a></li>
+        <li>The reward is split using the formular: <br>
+            Your reward = (Match reward * Delegators share * Your value) / Pool value</li>
+      </ul>`);
+  }
+
+  function howItWork() {
+    openHelp(`
+      <h3>How it work</h3>
+      <ul>
+        <li>Sumer provide pools that you can delegate your Splinterland cards to earn reward</li>
+        <li>You will need a <a href="https://steemmonsters.com?ref=bakaoh" target="_blank">Splinterland</a> account to get started (spellbook is not necessary if you don't play game)</li>
+        <li>Go <a href="https://steemmonsters.com/?p=market" target="_blank">here</a> to buy some card</li>
+        <li>Delegate cards to any pools in the list</li>
+        <li>Wait for the pool win some matches and get reward</li>
+      </ul>
+      <h3>Pool</h3>
+      <ul>
+        <li>Each pool is mapped to an autoplay Splinterland account</li>
+        <li>Pool receive reward from playing game and split them to card delegator</li>
+        <li>Pools have different share policy and strategy (effect the win rate)</li>
+      </ul>
+      <h3>Delegate</h3>
+      <ul>
+        <li>When you put a card in a pool, we call it Delegated card</li>
+        <li>Delegated cards will earn you portion of rewards from the pool</li>
+        <li>You still own the card but can't use Delegated card in-game</li>
+        <li>You can Undelegate your card (and stop earning reward from that card) anytime</li>
+      </ul>`);
+  }
+
+  function createPoolHelp() {
+    openHelp(`
+      <h3>Benefit</h3>
+      <ul>
+        <li>You have full control of policy and strategy of the pool you created.</li>
+        <li>Make the pool public for anyone to join, or private for you and your friend only.</li>
+        <li>Receive a small income everyday even if there is noone join your pool.</li>
+      </ul>
+      <h3>How to setup</h3>
+      <ul>
+        <li>We are open-source, for self-hosted pool, please go <a href="https://github.com/bakaoh/magic-doll" target="_blank">here</a></li>
+        <li>Or contact <a href="mailto:idlesplinter@gmail.com">us</a> to set it up and list in the main site with a small fee</li>
+      </ul>`);
+  }
+</script>

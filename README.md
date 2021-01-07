@@ -29,3 +29,6 @@ Magic-doll is a multi-application platform that build on top of [Kyle](https://g
 ## Misc
 
 A golem created by the twisted witch Sumer. However, instead of being animated by magic, it has been brought to life using human souls (or GLM).
+
+## License
+`Magic-doll` is licensed under the terms of the GNU General Public License Version 3. See [LICENSE.md](LICENSE.md) for more information.
